@@ -110,8 +110,9 @@ Notes
    Linux -- 1000. This might lead to some minor issues if there are shared
    filesystems.
 
-2. Development branch of FreeBSD generally includes newer version of ZFS than
-   provided by Linux packages. This may prevent access to ZFS systems created
-   in FreeBSD from Linux, e.g., `feature@head_errlog` feature (check with
-   `zpool get all data`).
-   sudo apt install zfsutils-linux
+2. FreeBSD development branch generally includes newer version of ZFS than
+   provided by Linux packages (`sudo apt install zfsutils-linux`), which may
+   prevent access to ZFS systems created in FreeBSD from Linux. Use
+   compatibility option to prevent this, e.g.
+   `zpool create -m <mountpoint> -o compatibility=/usr/share/zfs/compatibility.d/zol-0.8 <pool> /dev/<partition>`
+
