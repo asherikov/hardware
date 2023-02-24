@@ -102,6 +102,14 @@ sudo apt install brightnessctl brightness-udev
 sudo brightnessctl set 50
 ```
 
+### Battery
+
+```
+sudo apt install upower
+upower -i /org/freedesktop/UPower/devices/battery_BAT0
+```
+
+
 
 Notes
 =====
