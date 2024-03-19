@@ -9,7 +9,7 @@ https://bsd-hardware.info/?probe=5359b4dee9
 
 ### Version
 
-14 works, 13 might.
+15 & 14 work, 13 not tested.
 
 
 ### GPT partition table
@@ -26,7 +26,7 @@ Using ZFS for root works too, but requires an extra partition.
 
 ### WiFi
 
-`iwlwifi` works, but unstable: connection issues, crashes.
+`iwlwifi` works, but unstable: connection issues, crashes. Ok now (2024).
 
 
 ### Bluetooth
@@ -48,6 +48,33 @@ Not supported.
 ### Camera
 
 Install `webcamd` and add users to `webcamd` group.
+
+
+### Audio
+
+Speakers are not automatically muted by when headphones are connected, can be
+solved using device hints
+(<https://forums.freebsd.org/threads/jack-detection-fails.48289/>)
+
+Pins (`sysctl dev.hdac.1.pindump=1 && dmesg`):
+```
+hdaa1: nid   0x    as seq device       conn  jack    loc        color   misc
+hdaa1: 18 90a60140 4  0  Mic           Fixed Digital Internal   Unknown 1
+hdaa1: 20 90170110 1  0  Speaker       Fixed Analog  Internal   Unknown 1
+hdaa1: 21 01211020 2  0  Headphones    Jack  1/8     Rear       Black   0
+hdaa1: 23 40000000 0  0  Line-out      None  Unknown 0x00       Unknown 0
+hdaa1: 24 01a11030 3  0  Mic           Jack  1/8     Rear       Black   0
+hdaa1: 25 411111f0 15 0  Speaker       None  1/8     Rear       Black   1
+hdaa1: 26 411111f0 15 0  Speaker       None  1/8     Rear       Black   1
+hdaa1: 27 411111f0 15 0  Speaker       None  1/8     Rear       Black   1
+hdaa1: 30 411111f0 15 0  Speaker       None  1/8     Rear       Black   1
+```
+
+Add `hint.hdaa.1.nid21.config="as=1 seq=15"` to `/boot/device.hints`: `as=1` --
+move headphones to the same association as the speaker, `seq=15` -- override
+speaker with headphones when connected, see `man snd_hda`.
+
+Can also be changed manually: `sysctl hw.snd.default_unit=2`
 
 
 ### Other
@@ -77,6 +104,12 @@ it should detect both FreeBSD and Linux and boot either of them.
 apt-add-repository ppa:rodsmith/refind
 apt update
 apt install refind
+```
+
+It might be necessary to drop default loader from the boot order list.
+```
+sudo efibootmgr --delete-bootnum -b 0005
+sudo efibootmgr --bootorder 0000
 ```
 
 
@@ -124,3 +157,4 @@ Notes
    compatibility option to prevent this, e.g.
    `zpool create -m <mountpoint> -o compatibility=/usr/share/zfs/compatibility.d/zol-0.8 <pool> /dev/<partition>`
 
+3. Mounting of UFS in Linux: `sudo mount -r -t ufs -o ufstype=ufs2 ...`
