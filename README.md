@@ -142,6 +142,13 @@ sudo apt install upower
 upower -i /org/freedesktop/UPower/devices/battery_BAT0
 ```
 
+### Shared filesystems
+
+- Mounting of UFS: `sudo mount -r -t ufs -o ufstype=ufs2 ...`
+
+- Force import of zfs pools in Lunux by changing `ZPOOL_IMPORT_OPTS` in
+  `/etc/default/zfs`.
+
 
 
 Notes
@@ -156,5 +163,3 @@ Notes
    prevent access to ZFS systems created in FreeBSD from Linux. Use
    compatibility option to prevent this, e.g.
    `zpool create -m <mountpoint> -o compatibility=/usr/share/zfs/compatibility.d/zol-0.8 <pool> /dev/<partition>`
-
-3. Mounting of UFS in Linux: `sudo mount -r -t ufs -o ufstype=ufs2 ...`
